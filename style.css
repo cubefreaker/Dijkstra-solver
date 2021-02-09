@@ -12,7 +12,7 @@ body{
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
-    background-color: #333;
+    background-color: #fff;
     width: 100%;
     height: 100vh;
     z-index: -1;
@@ -22,7 +22,7 @@ body{
     top:50%;
     left:50%;
     transform: translate(-50%,-50%);
-    color:#fff;
+    color:#313131;
     pointer-events: none;
     z-index: -10;
 }
@@ -30,20 +30,20 @@ body{
     position: absolute;
     width: 50px;
     height: 50px;
-    border: 5px solid rgb(163, 211, 208);
+    border: 5px solid rgb(68, 164, 243);
     border-radius: 50%;
     margin-top:-3px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #FFF;
+    color: #313131;
     cursor: pointer;
     z-index: 10;
 }
 .outline-btn{
-    border: 2px solid rgb(102, 216, 159);
-    /* border: none; */
-    background-color: transparent;
+    /* border: 2px solid rgb(68, 164, 243); */
+    border: none;
+    background-color: rgb(68, 164, 243);
     border-radius: 4px;
     cursor: pointer;
     outline: none;
@@ -52,18 +52,20 @@ body{
     box-shadow: 1px 2px 3px 1px #333;
 }
 .outline-btn:active{
+    background-color:rgba(146, 146, 146, 0.4);
     box-shadow: none;
 }
 .outline-btn:disabled{
+    background-color:rgba(146, 146, 146, 0.4);
     box-shadow: none;
 }
 .line{
     height:5px;
-    background-color: lemonchiffon;
+    background-color: #00000088;
     position: absolute;
     transform-origin: top left;
     text-align: center;
-    color: #EEE;
+    color: #333333;
     line-height: 2rem;
 }
 .line .edge-weight{
@@ -73,8 +75,8 @@ body{
 }
 header{
     width: 100%;
-    padding:20px;
-    background-color: #10A881;
+    padding:10px;
+    background-color: #69ca91;
     text-align: center;
 }
 header .title{
@@ -110,7 +112,7 @@ main ul>li{
 .options input{
     outline: 0;
     padding: 6px;
-    width: 100px;
+    width: 120px;
 }
 .path{
     position: absolute;
@@ -121,9 +123,15 @@ main ul>li{
     overflow-x: scroll;
     width: 40%;
     min-width: 300px;
-    background-color: rgba(146, 146, 146, 0.4);
+    background-color: rgba(122, 122, 122, 0.479);
     transition-duration: 1s;
 }
 .path::-webkit-scrollbar{
     display: none;
+}
+
+p{
+    font-size: medium;
+    font-weight: 700;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }

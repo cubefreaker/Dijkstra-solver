@@ -15,10 +15,14 @@
             <a href="./instructions.html"><img src="https://cdn4.iconfinder.com/data/icons/web-mobile1/100/Untitled-8-512.png" alt=""></a>
         </div>
         <div class="options">
-            <button class="outline-btn" id="add-edge-enable" onclick="addEdges()">Add edges </button>
+            <div>
+                <button class="outline-btn" id="add-edge-enable" onclick="addEdges()">Add edges </button>
+                <button class="outline-btn" id="reset-btn" onclick="reset()">Reset</button>
+            </div>
             <div>
                 <input type="text" inputmode="numeric" id="source-node" placeholder="Source Node" />
-                <button class="outline-btn" onclick="findShortestPath(this)">Run</button>
+                <input type="text" inputmode="numeric" id="destination-node" placeholder="Destination Node" />
+                <button class="outline-btn" onclick="findShortestPath()">Run</button>
             </div>
         </div>
     </header>
@@ -29,5 +33,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/gsap.min.js"></script>
     <script src="./gsap.js"></script>
     <script src="./script.js"></script>
+    <script src="./pathFinding.js"></script>
+    <script src="./shortestPath.js"></script>
 </body>
 </html>

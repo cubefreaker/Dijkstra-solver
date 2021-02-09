@@ -2,7 +2,6 @@ let blocks = document.getElementsByClassName('block-dijk')[0];
 let addEdge = false;
 let cnt = 0;
 let visited = [];
-let unvisited = [];
 let dist;
 
 let alerted = localStorage.getItem('alerted') || '';
@@ -14,7 +13,7 @@ let alerted = localStorage.getItem('alerted') || '';
 // It is called when user starts adding edges by clicking on button given
 const addEdges = () => {
     addEdge = true; 
-    document.getElementById('add-edge-enable').disabled = 'true';
+    document.getElementById('add-edge-enable').disabled = true;
     // Initializing array for adjacency matrix representation
     dist = new Array(cnt+1).fill(Infinity).map(() => new Array(cnt+1).fill(Infinity));
 }
@@ -42,7 +41,7 @@ let appendBlock = (x,y)=>{
         // If state variable addEdge is false, can't start adding edges
         if(!addEdge) return;
 
-        block.style.backgroundColor = 'coral';
+        block.style.backgroundColor = 'lime';
         arr.push(block.id);
 
         // When two elements are push, draw a edge and empty the array
@@ -57,17 +56,17 @@ let appendBlock = (x,y)=>{
 // Allow creating nodes on screen by clicking
 blocks.addEventListener('click', (e)=>{
     if(addEdge) return;
-    if(cnt>12) {
-        alert("cannot add more than 12 vertices");
-        return;
-    }
-    console.log(e.x,e.y);
+    // if(cnt>12) {
+    //     alert("cannot add more than 12 vertices");
+    //     return;
+    // }
+    // console.log(e.x,e.y);
     appendBlock(e.x,e.y);
 })
 
 // Function to draw a line between nodes
 const drawLine = (x1,y1,x2,y2,ar) => {
-    console.log(ar);
+    // console.log(ar);
     // Length of line
     const len = Math.sqrt((x1-x2)**2 + (y1-y2)**2);
     const slope = (x2-x1) ? (y2-y1)/(x2-x1) : (y2>y1 ? 90 : -90);
@@ -75,6 +74,7 @@ const drawLine = (x1,y1,x2,y2,ar) => {
     // Adding length to distance array
     dist[Number(ar[0])][Number(ar[1])] = Math.round(len/10);
     dist[Number(ar[1])][Number(ar[0])] = Math.round(len/10);
+    // console.log(dist);
 
     // Drawing line
     const line = document.createElement('div');
@@ -89,12 +89,22 @@ const drawLine = (x1,y1,x2,y2,ar) => {
     p.contentEditable='true';
     p.inputMode='numeric';
     p.addEventListener('blur', (e)=>{
+        n1 = Number(p.closest('.line').id.split('-')[1]);
+        n2 = Number(p.closest('.line').id.split('-')[2]);
+        
         if(isNaN(Number(e.target.innerText))){
             alert('Enter valid edge weight');
             return;
+        } else if(e.target.innerText == '') {
+            alert('Edge weight can not be empty');
+            if(dist[n1][n2] != Infinity){
+                p.innerText = dist[n1][n2];
+            } else {
+                p.innerText = Math.round(len/10);
+            }
+            return;
         }
-        n1 = Number(p.closest('.line').id.split('-')[1]);
-        n2 = Number(p.closest('.line').id.split('-')[2]);
+
         // console.log(p.closest('.line'), e.target.innerText, n1, n2);
         dist[n1][n2] = Number(e.target.innerText);
         dist[n2][n1] = Number(e.target.innerText);
@@ -109,14 +119,14 @@ const drawLine = (x1,y1,x2,y2,ar) => {
 
     line.append(p);
     blocks.appendChild(line);
-    document.getElementById(arr[0]).style.backgroundColor = '#333';
-    document.getElementById(arr[1]).style.backgroundColor = '#333';
+    document.getElementById(arr[0]).style.backgroundColor = '#fff';
+    document.getElementById(arr[1]).style.backgroundColor = '#fff';
 }
 
 // Function to get (x, y) coordinates of clicked node
 const drawUsingId = (ar) => {
     if(ar[0]===ar[1]){
-        document.getElementById(arr[0]).style.backgroundColor = '#333';
+        document.getElementById(arr[0]).style.backgroundColor = '#fff';
         arr=[];
         return;
     }
@@ -127,111 +137,24 @@ const drawUsingId = (ar) => {
     drawLine(x1,y1,x2,y2,ar);
 }
 
-// Function to find shortest path from given source to all other nodes
-const findShortestPath = (el) => {
-    clearScreen();
-    let source = Number(el.previousElementSibling.value);
-    if(source >= cnt || isNaN(source)){
-        alert('Invalid source');
-        return;
-    }
-    document.getElementById(source).style.backgroundColor = 'grey';
-    // console.log(source);
-    let parent = [];
-    parent[source] = -1;
+const reset = () => {    
+    dist = [];
     visited = [];
-    for(i=0;i<cnt;i++) unvisited.push(i);
+    unvisited = [];
+    cost = [];
+    parent = [];
 
-    // Array containing cost of reaching i(th) node from source
-    let cost = [];
     for(i=0;i<cnt;i++){
-        i===source ? null : (dist[source][i] ? cost[i]=dist[source][i] : cost[i]=Infinity );
-    }
-    cost[source] = 0;
+        document.getElementById(i).remove();
+    }    
+    cnt = 0;
 
-    // Array which will contain final minimum cost
-    let minCost=[];
-    minCost[source]=0;
+    addEdge = false;
+    document.getElementById('add-edge-enable').disabled = false;
 
-    // Repeating until all edges are visited
-    while(unvisited.length){
-        let mini = cost.indexOf(Math.min(...cost));
-        // console.log("draw", visited[visited.length-1],mini);
-        visited.push(mini);
-        unvisited.splice(unvisited.indexOf(mini),1);
-
-        // Relaxation of unvisited edges
-        for(j of unvisited){
-            if(j===mini) continue;
-            // console.log(mini, j);
-            if(cost[j] > dist[mini][j]+cost[mini]){
-                minCost[j] = dist[mini][j]+cost[mini];
-                cost[j] = dist[mini][j]+cost[mini];
-                parent[j] = mini;
-            }else{
-                minCost[j] = cost[j];
-                // parent[j] = source;
-            }
-        }
-        cost[mini]=Infinity;
-    }
-    console.log("Minimum Cost", minCost);
-    for(i=0;i<cnt;i++) parent[i]===undefined ? parent[i]=source : null;
-    // console.log(parent);
-    indicatePath(parent,source);
-}
-
-
-const indicatePath = async (parentArr,src)=>{
-    document.getElementsByClassName('path')[0].innerHTML = '';
-    for(i=0;i<cnt;i++){
-        let p = document.createElement('p');
-        p.innerText = ("Node " + i + " --> " + src);
-        await printPath(parentArr, i, p);
-    }
-}
-
-const printPath = async (parent, j, el_p) => {
-    if(parent[j]===-1) return;
-    await printPath(parent, parent[j], el_p);
-    el_p.innerText = el_p.innerText + " " + j;
-
-    document.getElementsByClassName('path')[0].style.padding ='1rem';
-    document.getElementsByClassName('path')[0].appendChild(el_p);
-
-    // console.log(j,parent[j]);
-
-    if(j<parent[j]){
-        let tmp = document.getElementById(`line-${j}-${parent[j]}`);
-        await colorEdge(tmp);
-    }else {
-        let tmp = document.getElementById(`line-${parent[j]}-${j}`);
-        await colorEdge(tmp);
-    }
-}
-
-const colorEdge = async (el) => {
-    if(el.style.backgroundColor !== 'aqua'){
-        await wait(1000);
-        el.style.backgroundColor = 'aqua';
-        el.style.height = '8px';
-    }
-}
-
-const clearScreen = ()=>{
     document.getElementsByClassName('path')[0].innerHTML = '';
     let lines = document.getElementsByClassName('line');
-    for(line of lines){
-        line.style.backgroundColor = '#EEE';
-        line.style.height = '5px';
+    while(lines.length > 0){
+        lines[0].parentNode.removeChild(lines[0]);
     }
-}
-
-const wait = async (t)=>{
-    let pr = new Promise((resolve,reject) =>{
-        setTimeout(()=>{
-            resolve('done!')
-        }, t)
-    });
-    res = await pr;
 }
